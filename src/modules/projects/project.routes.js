@@ -9,15 +9,30 @@ import {
   updateProject,
   deleteProject,
 } from "./project.controller.js";
+import { validationMiddleware } from "../../middleware/validation.middleware.js";
+import { createProjectValidator, updateProjectValidator } from "./project.validator.js";
 
 const projectRouter = express.Router();
 
 projectRouter.use(authMiddleware);
 
-projectRouter.post("/", createProject);
+projectRouter.post(
+  "/",
+  createProjectValidator,
+  validationMiddleware,
+  createProject
+);
+
 projectRouter.get("/", getProjectsController);
 projectRouter.get("/:id", getProjectByIdController);
-projectRouter.patch("/:id", updateProject);
+
+projectRouter.patch(
+  "/:id",
+  updateProjectValidator,
+  validationMiddleware,
+   updateProject
+  );
+
 projectRouter.delete("/:id", deleteProject);
 
 export default projectRouter;
