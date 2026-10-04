@@ -6,7 +6,9 @@ import {
 import bcrypt from "bcrypt";
 
 export const getAllUsers = async () => {
-  return findAllUsers();
+    const users = await findAllUsers;
+
+    return users.map(({password, ...users}) => users)
 };
 
 export const createUser = async (data) => {
@@ -15,9 +17,14 @@ export const createUser = async (data) => {
   }
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
+    
+  const user = await createUserRepository({
+    email : data.email,
+    password : hashedPassword,
+  }) 
 
-  return createUserRepository({
-    email: data.email,
-    password: data.password,
-  });
+  const {password , ...userWithoutPassword} = user;
+
+  return userWithoutPassword;
+  
 };
