@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { db } from "../../config/prisma.js";
 import { generateToken } from "../../utils/jwt.js";
+import { AppError } from "../../utils/AppError.js";
 
 export const login = async (email, password) => {
   const user = await db.orm.public.User.findUnique({
@@ -10,13 +11,13 @@ export const login = async (email, password) => {
   });
 
   if (!user) {
-    throw new Error("Invalid email or password");
+    throw new AppError("Invalid email or password", 401);
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasswordValid) {
-    throw new Error("Invalid email or password");
+    throw new AppError("Invalid email or password", 401);
   }
 
   const token = generateToken({

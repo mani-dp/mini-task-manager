@@ -7,20 +7,21 @@ import {
 } from "./task.repository.js";
 
 import { findProjectById } from "../projects/project.repository.js";
+import { AppError } from "../../utils/AppError.js";
 
 export const createTask = async (userId, projectId, data) => {
   const project = await findProjectById(projectId);
 
   if (!project) {
-    throw new Error("Project not found");
+    throw new AppError("Project not found", 404);
   }
 
   if (project.userId !== userId) {
-    throw new Error("Access denied");
+    throw new AppError("Access denied", 403);
   }
 
   if (!data.title) {
-    throw new Error("Task title is required");
+    throw new AppError("Task title is required", 400);
   }
 
   return createTaskRepository({
@@ -34,11 +35,11 @@ export const getTasksByProject = async (userId, projectId) => {
   const project = await findProjectById(projectId);
 
   if (!project) {
-    throw new Error("Project not found");
+    throw new AppError("Project not found", 404);
   }
 
   if (project.userId !== userId) {
-    throw new Error("Access denied");
+    throw new AppError("Access denied", 403);
   }
 
   return findTasksByProjectId(projectId);
@@ -48,13 +49,13 @@ export const getTaskById = async (userId, taskId) => {
   const task = await findTaskById(taskId);
 
   if (!task) {
-    throw new Error("Task not found");
+    throw new AppError("Task not found", 404);
   }
 
   const project = await findProjectById(task.projectId);
 
   if (!project || project.userId !== userId) {
-    throw new Error("Access denied");
+    throw new AppError("Access denied", 403);
   }
 
   return task;
@@ -64,13 +65,13 @@ export const updateTask = async (userId, taskId, data) => {
   const task = await findTaskById(taskId);
 
   if (!task) {
-    throw new Error("Task not found");
+    throw new AppError("Task not found", 404);
   }
 
   const project = await findProjectById(task.projectId);
 
   if (!project || project.userId !== userId) {
-    throw new Error("Access denied");
+    throw new AppError("Access denied", 403);
   }
 
   const updateData = {};
@@ -94,13 +95,13 @@ export const deleteTask = async (userId, taskId) => {
   const task = await findTaskById(taskId);
 
   if (!task) {
-    throw new Error("Task not found");
+    throw new AppError("Task not found", 404);
   }
 
   const project = await findProjectById(task.projectId);
 
   if (!project || project.userId !== userId) {
-    throw new Error("Access denied");
+    throw new AppError("Access denied", 403);
   }
 
   return deleteTaskRepository(taskId);

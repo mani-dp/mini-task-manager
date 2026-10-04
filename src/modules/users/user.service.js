@@ -11,7 +11,7 @@ export const getAllUsers = async () => {
 
 export const createUser = async (data) => {
   if (!data.email || !data.password) {
-    throw new Error("Email and password are required");
+    throw new AppError("Email and password are required", 400);
   }
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
